@@ -1,0 +1,14 @@
+# $Id: Makefile 12 2013-02-23 17:50:57Z wunderlins $
+
+CC_OPTS=-Wall -lpthread -ldl -lc 
+
+all: sqlite3.o shell.o
+
+sqlite3.o: sqlite3.c
+	gcc $(CC_OPTS) -c sqlite3.c
+
+shell.o: shell.c
+	gcc $(CC_OPTS) -c shell.c
+
+clean:
+	rm *.o
