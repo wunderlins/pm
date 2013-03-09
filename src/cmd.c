@@ -67,11 +67,10 @@ int main(int argc, char** argv) {
 	}
 
 	char* mode = opt_get('m', &o);
-
-	//printf("db: %s\n", db);
-	
-	// Create an int variable for storing the return code for each call
-	int retval;
+	if (mode == NULL) {
+		usage();
+		return 1;
+	}
 	
 	// check if we have a data base file
 	int db_state = access(db, W_OK);
@@ -93,6 +92,9 @@ int main(int argc, char** argv) {
 	// Create a handle for database connection, create a pointer to sqlite3
 	sqlite3 *dbhandle;
 		
+	// Create an int variable for storing the return code for each call
+	int retval;
+	
 	// try to create the database. If it doesnt exist, it would be created
 	// pass a pointer to the pointer to sqlite3, in short sqlite3**
 	retval = sqlite3_open(db, &dbhandle);
@@ -104,7 +106,7 @@ int main(int argc, char** argv) {
 	}
 	printf("Connection successful\n");
 	
-	printf("%s, %s, %d\n", mode, modes[MODE_POOL_CREATE], strcmp(mode, modes[MODE_POOL_CREATE]));
+	//printf("%s, %s, %d\n", mode, modes[MODE_POOL_CREATE], strcmp(mode, modes[MODE_POOL_CREATE]));
 	
 	if (strcmp(mode, modes[MODE_POOL_CREATE]) == 0) {
 		/*
@@ -119,21 +121,13 @@ int main(int argc, char** argv) {
 		printf("Inserted pool id: %d\n", id);
 		*/
 		
-		// check if we have user input from the command line
-		char* title;
-		char* author;
-		char* description;
-		
 		printf("arg: %d, argc: %d\n", r, argc);
 		for (int i=argc-o.num_args; i<o.argc; i++) {
 			printf("%d = %s\n", i, argv[i]);
 		}
 		
-		//mode_pool_create(dbhandle);
+		int ret = mode_pool_create(dbhandle);
 	}
-	
-	// show open pool
-	// A prepered statement for fetching tables
 	
 	if (strcmp(mode, modes[MODE_POOL_LIST]) == 0) {
 		display_view(dbhandle, "pool_open");
