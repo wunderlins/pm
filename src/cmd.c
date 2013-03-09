@@ -14,6 +14,10 @@
 #include "libpm.h"
 #include "cmd.h"
 
+void usage(void) {
+	printf("Usage: pm [-d database] [-m mode]\n");
+}
+
 int main(int argc, char** argv) {
 	
 	// parse command line options	
@@ -58,7 +62,7 @@ int main(int argc, char** argv) {
 	
 	char* db = opt_get('d', &o);
 	if (db == NULL) {
-		printf("Usage: ...\n");
+		usage();
 		return 1;
 	}
 

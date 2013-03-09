@@ -1,7 +1,7 @@
 #ifndef CMD_H_
 #define CMD_H_
 
-char* dbname;
+//char* dbname;
 
 typedef struct opt_t {
 	char opt;
@@ -16,6 +16,7 @@ typedef struct options_t {
 	//char* args[];  // remaining arguments
 } options_t;
 
+void usage(void);
 int mode_pool_create(sqlite3 *dbhandle);
 char* opt_get(char opt, struct options_t* opts);
 int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* opts);
