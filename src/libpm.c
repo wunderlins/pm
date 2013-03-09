@@ -1,5 +1,3 @@
-// $Id: libpm.c 53 2013-03-08 21:46:40Z wunderlins $
-
 /**
  *
  * EXIT CODES

@@ -1,5 +1,3 @@
-# $Id: Makefile 54 2013-03-08 21:49:47Z wunderlins $
-
 CC_OPTS=-Wall -std=c99 -I lib/
 
 all:

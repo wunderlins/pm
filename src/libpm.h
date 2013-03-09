@@ -1,5 +1,3 @@
-// $Id: libpm.h 53 2013-03-08 21:46:40Z wunderlins $
-
 #ifndef LIBPM_H_
 #define LIBPM_H_
 
