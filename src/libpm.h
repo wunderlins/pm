@@ -27,6 +27,7 @@ typedef struct pool_t {
 pool_t create_pool_rec(void);
 sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool);
 int display_view(sqlite3 *dbhandle, char* view);
+int read_file(char* filename, char** contents);
 
 #endif
 
