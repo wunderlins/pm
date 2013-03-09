@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# $Id$	
-
-LD_LIBRARY_PATH=. ./cmd "$@"

@@ -1,3 +1,0 @@
-// $Id$
-
-int read_file(char* filename, char** contents);
