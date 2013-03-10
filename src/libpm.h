@@ -3,6 +3,7 @@
 
 #define MODE_POOL_CREATE 1
 #define MODE_POOL_LIST 2
+#define MODE_LENGTH 2
 
 #define OPTIONS "d:m:"
 

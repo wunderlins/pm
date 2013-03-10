@@ -15,7 +15,13 @@
 #include "cmd.h"
 
 void usage(void) {
-	printf("Usage: pm [-d database] [-m mode]\n");
+	printf("Usage: pm [-d database] [-m mode]\n\n");
+	printf(" -m: ");
+	for(int i=0; i<MODE_LENGTH; i++) {
+		printf("\"%s\" ", modes[i+1]);
+	}
+	printf("\n\nEnvironment Variables:\n");
+	printf("PM_DB: path to the sqlite database\n");
 }
 
 int main(int argc, char** argv) {
@@ -62,8 +68,15 @@ int main(int argc, char** argv) {
 	
 	char* db = opt_get('d', &o);
 	if (db == NULL) {
-		usage();
-		return 1;
+		// check if we can use an environment variable
+		char *db_env = getenv("PM_DB");		
+		
+		if (db_env == NULL) {
+			usage();
+			return 1;
+		}
+		
+		db = db_env;
 	}
 
 	char* mode = opt_get('m', &o);
