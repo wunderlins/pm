@@ -1,8 +1,6 @@
 #ifndef CMD_H_
 #define CMD_H_
 
-//char* dbname;
-
 typedef struct opt_t {
 	char opt;
 	char* arg;

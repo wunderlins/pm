@@ -5,6 +5,8 @@
 #define MODE_POOL_LIST 2
 #define MODE_LENGTH 2
 
+#define PM_DEFAULT_DB "pm.dat"
+
 #define OPTIONS "d:m:"
 
 const char* modes[] = {

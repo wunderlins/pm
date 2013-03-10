@@ -1,11 +1,16 @@
+// needed for realpath, it is trated as GNU extension instead of posix
+#define _GNU_SOURCE
+
+#include <unistd.h>
+#include <limits.h>
+#include <errno.h>
 #include <stdio.h>
 #include <sqlite3.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
 #include <time.h>
 #include <string.h>
 #include <getopt.h>
+#include <libgen.h>
 
 // readline
 #include <readline/readline.h>
@@ -66,17 +71,31 @@ int main(int argc, char** argv) {
 	printf("db: %s\n", db);
 	*/
 	
+	// check where the db has to be read from. the command line option
+	// -d has first priority. If this is not given, then the environment 
+	// variable PM_DB is checked. If still nothing was found the default 
+	// file pm.dat (in the same folder as the executable) is used.
 	char* db = opt_get('d', &o);
 	if (db == NULL) {
 		// check if we can use an environment variable
 		char *db_env = getenv("PM_DB");		
 		
 		if (db_env == NULL) {
-			usage();
-			return 1;
-		}
-		
-		db = db_env;
+			
+			// check if we can find a file named "pm.dat" in the same folder 
+			// as the executable.
+			char path[PATH_MAX + 1]; 
+			path[0] = '\0';
+			realpath((const char*) argv[0], path);
+			if (path == NULL || path[0] == '\0') {
+				usage();
+				return 1;
+			}
+			dirname(path);
+			char *tmp = strcat(path, "/");
+			db = strcat(tmp, PM_DEFAULT_DB);
+		} else
+			db = db_env;
 	}
 
 	char* mode = opt_get('m', &o);
@@ -88,16 +107,7 @@ int main(int argc, char** argv) {
 	// check if we have a data base file
 	int db_state = access(db, W_OK);
 
-	/*
-	char* content;
-	read_file("pm.c", &content);
-	printf("%s", content);
-	*/
-	
 	if (db_state == -1) {
-		// file does not exist or is not readable. What to do?
-		// FIXME: create new db or throw message about unreadable file
-
 		printf("Failed to open db file: %s\n", db);
 		return 1;
 	}
@@ -108,7 +118,7 @@ int main(int argc, char** argv) {
 	// Create an int variable for storing the return code for each call
 	int retval;
 	
-	// try to create the database. If it doesnt exist, it would be created
+	// open the database
 	// pass a pointer to the pointer to sqlite3, in short sqlite3**
 	retval = sqlite3_open(db, &dbhandle);
 	
@@ -123,21 +133,11 @@ int main(int argc, char** argv) {
 	
 	if (strcmp(mode, modes[MODE_POOL_CREATE]) == 0) {
 		/*
-		pool_t rec = create_pool_rec();
-		rec.title = "title";
-		rec.description = "description";
-		rec.author = "the author";
-		rec.type = 1;
-		//printf("id: %lu\ntitle: %s\n", rec.id, rec.title);
-	
-		sqlite3_int64 id = pool_create(&dbhandle, &rec);
-		printf("Inserted pool id: %d\n", id);
-		*/
-		
 		printf("arg: %d, argc: %d\n", r, argc);
 		for (int i=argc-o.num_args; i<o.argc; i++) {
 			printf("%d = %s\n", i, argv[i]);
 		}
+		*/
 		
 		int ret = mode_pool_create(dbhandle);
 	}
@@ -181,7 +181,7 @@ int mode_pool_create(sqlite3 *dbhandle) {
 /**
  * create a task from pool
  * 
- * A poll entry needs to be supplemented with monre information to make 
+ * A pool entry needs to be supplemented with monre information to make 
  * it a task.
  *
  * Minimal requirement to make a task from a pool entry are:
