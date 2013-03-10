@@ -47,6 +47,7 @@ User interface definition:
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <getopt.h>
 
 // our own libs
 #include "libpm.h"
@@ -185,3 +186,65 @@ int read_file(char* filename, char** contents) {
 	
 	return 0;
 }
+
+char* opt_get(char opt, struct options_t* opts) {
+	
+	for(int i=0; i<opts->num_opts; i++) {
+		//printf("c: %d, i: %d - %s\n", c, i, argv[c]);
+		//opts->args[c] = (char*) malloc(sizeof(char) * 255);
+		//opts->args[i++] = argv[c]; 
+		// printf("%d\n", opts->args[c]);
+		//continue;
+		
+		//printf("%c, %s\n", opts->opts[i].opt, opts->opts[i].arg);
+		if (opts->opts[i].opt == opt) {
+			//value = (char*)malloc(sizeof(char)*sizeof(opts->opts[i].arg));
+			//value = opts->opts[i].arg;
+			//printf("yay\n");
+			return opts->opts[i].arg;
+//			return 0;
+		}
+	}
+	
+	return NULL;
+}
+
+int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* opts) {
+	
+	opterr = 0;
+	
+	int option;
+	int i = 0;
+	int optcount = 0;
+	opts->argc = argc;
+	
+	while ((option = getopt(argc, argv, optstring)) != -1) {
+		opt_t o = {.opt = option, .arg = optarg};
+		
+		opts->opts[i] = o;
+		opts->num_opts++;
+		optcount++;
+		if (optarg != NULL)
+			optcount++;
+		i++;
+	}
+	optcount++; // skip the program 
+	
+	opts->num_args = argc - optcount;
+	
+	/*
+	i=0;
+	for(int c=optcount+1; c<argc; c++) {
+		printf("c: %d, i: %d - %s\n", c, i, argv[c]);
+		//opts->args[c] = (char*) malloc(sizeof(char) * 255);
+		opts->args[i++] = argv[c]; 
+		// printf("%d\n", opts->args[c]);
+		continue;
+	}
+	*/
+	
+	//opts->args = argv;
+	
+	return optcount;
+}
+

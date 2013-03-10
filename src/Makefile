@@ -1,7 +1,7 @@
 CC_OPTS=-Wall -std=c99 -I lib/
 CMD=gcc $(CC_OPTS) -o cmd cmd.c -L. -lpm -lreadline -lpthread -ldl -lc 
 
-all: sqlite3 libpm so cmd
+all: sqlite3 libpm so cmd sql
 	$(CMD)
 	
 db:
@@ -34,3 +34,5 @@ so: sqlite3 libpm
 cmd:
 	$(CMD)
 
+sql:
+	gcc $(CC_OPTS) lib/sqlite3.o -o sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 

@@ -1,4 +1,4 @@
-// needed for realpath, it is trated as GNU extension instead of posix
+// needed for realpath, it is treated as GNU extension instead of posix
 #define _GNU_SOURCE
 
 #include <unistd.h>
@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <getopt.h>
 #include <libgen.h>
 
 // readline
@@ -41,35 +40,6 @@ int main(int argc, char** argv) {
 		.argc = 0
 	};
 	int r = opt_parse(argc, argv, opts, &o);
-	
-	/*	
-	for (int i=0; i<o.num_opts; i++) {
-		printf("%c = %s\n", o.opts[i].opt, o.opts[i].arg);
-	}
-	
-	for (int i=0; i<o.num_args; i++)
-		printf("%d, %s\n", i, argv[r+i]);
-	
-	exit(0);
-	*/
-	
-	// first parameter is the path to the database, replace with getopt later on
-	/*
-	if (argc < r+1) {
-		printf("Usage: pm <dbpath>\n");
-		return 1;
-	}
-	*/
-	
-	// FIXME: use arg -d for database file, -m for mode
-	//dbname = argv[r+1]; // ]argv[1];
-	//printf("%s\n", dbname);
-	
-	/*
-	char* db = "";
-	opt_get('d', db, &o);
-	printf("db: %s\n", db);
-	*/
 	
 	// check where the db has to be read from. the command line option
 	// -d has first priority. If this is not given, then the environment 
@@ -193,65 +163,4 @@ int mode_pool_create(sqlite3 *dbhandle) {
  * - tasktype
  */
 long int pool_triage();
-
-char* opt_get(char opt, struct options_t* opts) {
-	
-	for(int i=0; i<opts->num_opts; i++) {
-		//printf("c: %d, i: %d - %s\n", c, i, argv[c]);
-		//opts->args[c] = (char*) malloc(sizeof(char) * 255);
-		//opts->args[i++] = argv[c]; 
-		// printf("%d\n", opts->args[c]);
-		//continue;
-		
-		//printf("%c, %s\n", opts->opts[i].opt, opts->opts[i].arg);
-		if (opts->opts[i].opt == opt) {
-			//value = (char*)malloc(sizeof(char)*sizeof(opts->opts[i].arg));
-			//value = opts->opts[i].arg;
-			//printf("yay\n");
-			return opts->opts[i].arg;
-//			return 0;
-		}
-	}
-	
-	return NULL;
-}
-
-int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* opts) {
-	
-	opterr = 0;
-	
-	int option;
-	int i = 0;
-	int optcount = 0;
-	opts->argc = argc;
-	
-	while ((option = getopt(argc, argv, optstring)) != -1) {
-		opt_t o = {.opt = option, .arg = optarg};
-		
-		opts->opts[i] = o;
-		opts->num_opts++;
-		optcount++;
-		if (optarg != NULL)
-			optcount++;
-		i++;
-	}
-	optcount++; // skip the program 
-	
-	opts->num_args = argc - optcount;
-	
-	/*
-	i=0;
-	for(int c=optcount+1; c<argc; c++) {
-		printf("c: %d, i: %d - %s\n", c, i, argv[c]);
-		//opts->args[c] = (char*) malloc(sizeof(char) * 255);
-		opts->args[i++] = argv[c]; 
-		// printf("%d\n", opts->args[c]);
-		continue;
-	}
-	*/
-	
-	//opts->args = argv;
-	
-	return optcount;
-}
 
