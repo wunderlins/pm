@@ -1,8 +1,10 @@
 CC_OPTS=-Wall -std=c99 -I lib/
 CMD=gcc $(CC_OPTS) -o cmd cmd.c -L. -lpm -lreadline -lpthread -ldl -lc 
+SQL=gcc -I lib/ lib/sqlite3.o -o sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 
 
-all: sqlite3 libpm so cmd sql
+all: so cmd sql
 	$(CMD)
+	$(SQL)
 	
 db:
 	rm $(DB) || true
@@ -15,6 +17,7 @@ clean:
 	rm *.o || true
 	rm *.so || true
 	rm cmd || true
+	rm sql || true
 	
 exe:
 	echo '#!/usr/bin/env bash' > pm
@@ -35,4 +38,6 @@ cmd:
 	$(CMD)
 
 sql:
-	gcc $(CC_OPTS) lib/sqlite3.o -o sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 
+	$(SQL)
+
+
