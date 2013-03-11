@@ -118,6 +118,7 @@ int main(int argc, char** argv) {
 		
 		// failed to insert
 		if (ret < 0) {
+			usage();
 			return 3;
 		}
 	}
@@ -134,6 +135,20 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
+/** insert pool entry
+ *
+ * uses the last 3 parameters as title, author and description. if the 
+ * last parameters (description) is not provided it is read from stdin.
+ *
+ * parameters are read interactively from the command prompt if ommited as 
+ 3 command line argument.
+ *
+ * Returns:
+ *   > 0, inserted id on success
+ *   < 0, on error
+ *
+ *   -1, not enough arguments
+ */
 sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char **argv) {
 	
 	char* title = NULL;
@@ -162,21 +177,37 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 		}
 	}
 	
-	//return 0;
-	
-	// TODO: 
 	// if there is no param 3 provided or param 3 is == "-" then check 
 	// for data on stdin
 	//  - check if we have input from stdin, see test/select
 	//  - if there is input on stdin, read it into memory,
 	//    see libpm/str_readfile()
-
+	fd_set s_rd, s_wr, s_ex;
+	FD_ZERO(&s_rd);
+	FD_ZERO(&s_wr);
+	FD_ZERO(&s_ex);
+	FD_SET(fileno(stdin), &s_rd);
+	struct timeval timeout = {
+		.tv_sec = 0,
+		.tv_usec = 100
+	};
+	int ret = select(fileno(stdin)+1, &s_rd, &s_wr, &s_ex, &timeout);
+	if (ret > 0) {
+		string input = str_readfile(stdin, 0);
+		description = input.text;
+	}
+	
+	// interactive input for missing arguments
 	if (title == NULL)
 		title =       readline("title:       ");
 	if (author == NULL)
 		author =      readline("Author:      ");	
 	if (description == NULL)
 		description = readline("Description: ");
+	
+	// we need all three parameters, else abort
+	if (title == NULL || author == NULL || description == NULL)
+		return -1;
 	
 	pool_t rec = create_pool_rec();
 	rec.title = title;
@@ -207,5 +238,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
  * - informed (Person)
  * - tasktype
  */
-long int pool_triage();
+long int pool_triage(void) {
+	return 0;
+}
 

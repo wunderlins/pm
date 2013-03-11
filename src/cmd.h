@@ -3,5 +3,6 @@
 
 void usage(void);
 sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char **argv);
+long int pool_triage(void);
 
 #endif
