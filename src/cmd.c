@@ -18,6 +18,8 @@
 #include "libpm.h"
 #include "cmd.h"
 
+int verbose = 0;
+
 void usage(void) {
 	printf("Usage: pm [-d database] [-m mode]\n\n");
 	printf(" -m: ");
@@ -40,6 +42,8 @@ int main(int argc, char** argv) {
 		.argc = 0
 	};
 	int r = opt_parse(argc, argv, opts, &o);
+	if (verbose)
+		printf("opt_parse(): option count %d\n", r);
 	
 	// check where the db has to be read from. the command line option
 	// -d has first priority. If this is not given, then the environment 
@@ -109,7 +113,12 @@ int main(int argc, char** argv) {
 		}
 		*/
 		
-		int ret = mode_pool_create(dbhandle);
+		sqlite3_int64 ret = mode_pool_create(dbhandle);
+		
+		// failed to insert
+		if (ret < 0) {
+			return 3;
+		}
 	}
 	
 	if (strcmp(mode, modes[MODE_POOL_LIST]) == 0) {
@@ -124,11 +133,16 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-int mode_pool_create(sqlite3 *dbhandle) {
+sqlite3_int64 mode_pool_create(sqlite3 *dbhandle) {
 	
 	char* title =       readline("title:       ");
-	char* description = readline("Description: ");
 	char* author =      readline("Author:      ");	
+	
+	// TODO: 
+	//  - check if we have input from stdin, see test/select
+	//  - if there is input on stdin, read it into memory,
+	//    see libpm/str_readfile()
+	char* description = readline("Description: ");
 	
 	pool_t rec = create_pool_rec();
 	rec.title = title;
@@ -136,17 +150,14 @@ int mode_pool_create(sqlite3 *dbhandle) {
 	rec.author = author;
 	rec.type = 1;
 	//printf("id: %lu\ntitle: %s\n", rec.id, rec.title);
-
+	
 	sqlite3_int64 id = pool_create(&dbhandle, &rec);
 	
-	// TODO: check for failed db p
+	// TODO: check for failed db operation
 	printf("Inserted pool id: %d\n", (int) id);
 	
-	return 0;
+	return id;
 }
-
-
-
  
 /**
  * create a task from pool

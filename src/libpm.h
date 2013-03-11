@@ -45,6 +45,24 @@ int read_file(char* filename, char** contents);
 char* opt_get(char opt, struct options_t* opts);
 int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* opts);
 
+// read file from FILE to memmory
+#ifndef DEFAULT_BLOCKSIZE
+	// num. bytes of junks of memory to allocate from the heap while reading 
+	// strings from file io to mem
+	#define DEFAULT_BLOCKSIZE 128
+#endif
+
+/** datatype to hold the character data */
+struct string_t {
+	int memsize;
+	int length;
+	char *text;
+	int error;
+};
+typedef struct string_t string;
+
+// function declarations
+string str_readfile(FILE *file, int bs);
 #endif
 
 

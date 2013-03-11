@@ -40,4 +40,7 @@ cmd:
 sql:
 	$(SQL)
 
+test/select:
+	gcc $(CC_OPTS) -o test/select test/select.c
+
 

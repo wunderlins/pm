@@ -2,6 +2,6 @@
 #define CMD_H_
 
 void usage(void);
-int mode_pool_create(sqlite3 *dbhandle);
+sqlite3_int64 mode_pool_create(sqlite3 *dbhandle);
 
 #endif

@@ -48,6 +48,10 @@ User interface definition:
 #include <sys/stat.h>
 #include <errno.h>
 #include <getopt.h>
+#include <stdio.h>
+#include <sys/select.h>
+#include <sys/time.h>
+
 
 // our own libs
 #include "libpm.h"
@@ -246,5 +250,70 @@ int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* 
 	//opts->args = argv;
 	
 	return optcount;
+}
+
+/** Read file from FILE pointer
+ *
+ * Reads data from FILE *file and dynamically allocates memory from the heap
+ * to store the read data. If memory allocation fails, the returned string
+ * struct's member error will equal to 1.
+ *
+ * If reading the file works, string.error will be 0.
+ */
+string str_readfile(FILE *file, int bs) {
+	int charsize = sizeof(char);
+	int charcount = 0;
+	int blocksize;
+	if (!bs)
+		blocksize = DEFAULT_BLOCKSIZE;
+	else
+		blocksize = bs;
+	int memsize = blocksize;
+	char *line = (char*) malloc(charsize * (memsize+1));
+	char *linep = line;
+
+	string l;
+	l.error = 0;
+	l.length = 0;
+	l.memsize = memsize;
+	l.length = charcount;
+	l.text = linep;
+
+	while (1) {
+
+		if(charcount > memsize) {
+			// reallocate memmory
+			memsize = memsize+blocksize;
+			char *al = (char*) realloc(linep, charsize * (memsize+1));
+
+			if (al == NULL) {
+				fprintf(stderr, "str_readfile(): Error, out of memory.\n");
+				*line = '\0';
+				l.text = linep;
+				l.error = 1;
+				return l;
+			}
+		}
+
+		char c = fgetc(file);
+
+		//if (c == '\n' || c == '\r' || c == EOF) {
+		if (c == EOF) {
+			charcount--;
+			break;
+		}
+
+		// remember input char
+		*line = c;
+		(void) *(line++);
+		charcount++;
+	}
+
+	*line = '\0';
+	l.text = linep;
+	l.memsize = memsize;
+	l.length = charcount;
+
+	return l;
 }
 
