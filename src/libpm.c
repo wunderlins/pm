@@ -219,7 +219,7 @@ int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* 
 	
 	int option;
 	int i = 0;
-	int optcount = 0;
+	//int optcount = 0;
 	opts->argc = argc;
 	
 	while ((option = getopt(argc, argv, optstring)) != -1) {
@@ -227,18 +227,18 @@ int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* 
 		
 		opts->opts[i] = o;
 		opts->num_opts++;
-		optcount++;
+		opts->optcount++;
 		if (optarg != NULL)
-			optcount++;
+			opts->optcount++;
 		i++;
 	}
-	optcount++; // skip the program 
+	opts->optcount++; // skip the program 
 	
-	opts->num_args = argc - optcount;
+	opts->num_args = argc - opts->optcount;
 	
 	/*
 	i=0;
-	for(int c=optcount+1; c<argc; c++) {
+	for(int c=opts->optcount+1; c<argc; c++) {
 		printf("c: %d, i: %d - %s\n", c, i, argv[c]);
 		//opts->args[c] = (char*) malloc(sizeof(char) * 255);
 		opts->args[i++] = argv[c]; 
@@ -249,7 +249,7 @@ int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* 
 	
 	//opts->args = argv;
 	
-	return optcount;
+	return opts->optcount;
 }
 
 /** Read file from FILE pointer

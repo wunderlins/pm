@@ -39,7 +39,8 @@ int main(int argc, char** argv) {
 	struct options_t o = {
 		.num_opts = 0, 
 		.num_args = 0, 
-		.argc = 0
+		.argc = 0,
+		.optcount = 0
 	};
 	int r = opt_parse(argc, argv, opts, &o);
 	if (verbose)
@@ -113,7 +114,7 @@ int main(int argc, char** argv) {
 		}
 		*/
 		
-		sqlite3_int64 ret = mode_pool_create(dbhandle);
+		sqlite3_int64 ret = mode_pool_create(dbhandle, &o, argv);
 		
 		// failed to insert
 		if (ret < 0) {
@@ -133,16 +134,49 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-sqlite3_int64 mode_pool_create(sqlite3 *dbhandle) {
+sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char **argv) {
 	
-	char* title =       readline("title:       ");
-	char* author =      readline("Author:      ");	
+	char* title = NULL;
+	char* author = NULL;
+	char* description = NULL;
+	
+	printf("opts.num_opts: %d, opts.num_args: %d, opts.optcount: %d, opts.argc: %d\n", \
+	       opts->num_opts, opts->num_args, opts->optcount, opts->argc);
+	
+	// read parameters from argv if given
+	//       remaining param 1 = title	
+	//       remaining param 2 = author
+	//       remaining param 3 = description
+	int c = 1;
+	for (int i=opts->optcount; i<opts->argc; i++, c++) {
+		switch (c) {
+			case 1:
+				title = argv[i];
+				break;
+			case 2:
+				author = argv[i];
+				break;
+			case 3:
+				description = argv[i];
+				break;
+		}
+	}
+	
+	//return 0;
 	
 	// TODO: 
+	// if there is no param 3 provided or param 3 is == "-" then check 
+	// for data on stdin
 	//  - check if we have input from stdin, see test/select
 	//  - if there is input on stdin, read it into memory,
 	//    see libpm/str_readfile()
-	char* description = readline("Description: ");
+
+	if (title == NULL)
+		title =       readline("title:       ");
+	if (author == NULL)
+		author =      readline("Author:      ");	
+	if (description == NULL)
+		description = readline("Description: ");
 	
 	pool_t rec = create_pool_rec();
 	rec.title = title;

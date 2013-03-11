@@ -31,10 +31,11 @@ typedef struct opt_t {
 } opt_t;
 
 typedef struct options_t {
-	struct opt_t opts[36];
+	struct opt_t opts[255];
 	int num_opts; // number of parsed options
 	int num_args; // number of remaining command line arguments
 	int argc;
+	int optcount;
 	//char* args[];  // remaining arguments
 } options_t;
 
