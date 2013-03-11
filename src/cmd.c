@@ -189,7 +189,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 	FD_SET(fileno(stdin), &s_rd);
 	struct timeval timeout = {
 		.tv_sec = 0,
-		.tv_usec = 100
+		.tv_usec = 20
 	};
 	int ret = select(fileno(stdin)+1, &s_rd, &s_wr, &s_ex, &timeout);
 	if (ret > 0) {
