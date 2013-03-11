@@ -21,13 +21,12 @@
 int verbose = 0;
 
 void usage(void) {
-	printf("Usage: pm [-d database] [-m mode]\n\n");
+	printf(USAGE_BEGIN);
 	printf(" -m: ");
 	for(int i=0; i<MODE_LENGTH; i++) {
 		printf("\"%s\" ", modes[i+1]);
 	}
-	printf("\n\nEnvironment Variables:\n");
-	printf("PM_DB: path to the sqlite database\n");
+	printf(USAGE_END);
 }
 
 int main(int argc, char** argv) {
