@@ -132,7 +132,7 @@ sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool) {
 	//if (verbose)
 	printf("sql: %s\n", sql);
 	
-	// FIXME: failing to insert the following sql stmnt
+	// FIXME: failing to insert the following sql statement, check error message!
 	/*
 	 * sql: INSERT INTO pool (title, description, author, date, type) VALUES ('title', 'description sdfg sdfg sdfg sdfg
 	 * sdfasf asdf asdf asdf asdf 12345678', 'author', 1363078731, 1)
