@@ -143,6 +143,7 @@ sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool) {
 	if(retval) {
 		printf("Inserting into pool failed, error: %d\n", retval);
 		printf("%s\n", errmsg);
+		sqlite3_free(errmsg);
 		return -1;
 	}
 	
