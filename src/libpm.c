@@ -1,14 +1,3 @@
-/**
- *
- * EXIT CODES
- *   -1 General exception
- *    1 DB file does not exist or is not readable
- *    2 failed to open database
- * 
- * TODO:
- * - add config file
- */
-
 /*
 
 User interface definition:

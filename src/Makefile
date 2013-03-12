@@ -1,5 +1,6 @@
-DB=~/tmp/pm.db
-CC_OPTS=-Wall -std=c99 -I lib/ -D PM_DB=$(DB) -g
+DB=/home/wus/tmp/pm.dat
+CC_OPTS=-Wall -std=c99 -I lib/ -g -DPM_DB_DEFAULT="$(DB)"
+#CC_OPTS=-Wall -std=c99 -I lib/ -g 
 CMD=gcc $(CC_OPTS) -o cmd cmd.c -L. -lpm -lreadline -lpthread -ldl -lc 
 SQL=gcc -I lib/ lib/sqlite3.o -o sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 
 

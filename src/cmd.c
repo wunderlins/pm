@@ -1,3 +1,13 @@
+/** Command line interface to pm
+ * 
+ * offers access to the database via a non-interactive cli interface.
+ * 
+ * Run it with LD_LIBRARY_PATH=. if the so is not installed in a system
+ * library directory.
+ *
+ * check usage (./cmd -h) for more information.
+ */
+
 // needed for realpath, it is treated as GNU extension instead of posix
 #define _GNU_SOURCE
 
@@ -20,6 +30,8 @@
 
 int verbose = 0;
 
+/** print usage
+ */
 void usage(void) {
 	printf(USAGE_BEGIN);
 	printf(" -m: ");
@@ -29,6 +41,8 @@ void usage(void) {
 	printf(USAGE_END);
 }
 
+/** main
+ */
 int main(int argc, char** argv) {
 	
 	// parse command line options	
@@ -42,6 +56,7 @@ int main(int argc, char** argv) {
 		.optcount = 0
 	};
 	int r = opt_parse(argc, argv, opts, &o);
+	
 	if (verbose)
 		printf("opt_parse(): option count %d\n", r);
 	
@@ -49,47 +64,99 @@ int main(int argc, char** argv) {
 	// -d has first priority. If this is not given, then the environment 
 	// variable PM_DB is checked. If still nothing was found the default 
 	// file pm.dat (in the same folder as the executable) is used.
+	
+	int db_location_type = 0;
+	const char *db_location_type_txt[] = {
+		"argument",
+		"ENV variable",
+		"runtime dir",
+		"compile time",
+		"none"
+	};
+	
+	// use command line switch -d
 	char* db = opt_get('d', &o);
+	
+	// check if we can use an environment variable
 	if (db == NULL) {
-		// check if we can use an environment variable
 		char *db_env = getenv("PM_DB");		
 		
-		if (db_env == NULL) {
-			
-			// check if we can find a file named "pm.dat" in the same folder 
-			// as the executable.
-			char path[PATH_MAX + 1]; 
-			path[0] = '\0';
-			realpath((const char*) argv[0], path);
-			if (path == NULL || path[0] == '\0') {
-				// use default location
-				db = (char*) default_db;
-			}
-			dirname(path);
-			char *tmp = strcat(path, "/");
-			db = strcat(tmp, PM_DEFAULT_DB);
-		} else {
+		if (db_env != NULL) {
+			db_location_type = 1;
 			db = db_env;
 			default_db = (const char*) db_env;
 		}
 	}
-
+	
+	// use compile time default location if available
+	if(db == NULL) {
+	
+		if (default_db != NULL) {
+			db_location_type = 3;
+			db = (char*) default_db;
+		} /* else {
+			db_location_type = 4;
+			fprintf(stderr, "Error: No database location provided, set PM_DB " \
+				              "or use the command line argument -d to specify " \
+				              "the database location.\n\n");
+			usage();
+			return 1;
+		} */
+	}
+	
+	// check if we can find a file named "pm.dat" in the same folder 
+	// as the executable.
+	if (db == NULL) {
+		char path[PATH_MAX + 1]; 
+		path[0] = '\0';
+		realpath((const char*) argv[0], path);
+		if (path == NULL || path[0] == '\0') {
+			fprintf(stderr, "Failed to resolve directory of executable\n");
+			return 4;
+		} else {
+			db_location_type = 2;
+			dirname(path);
+			char *tmp = strcat(path, "/");
+			db = strcat(tmp, PM_DEFAULT_DB);
+			printf("%s\n", db);
+		}
+	}
+	
 	char* mode = opt_get('m', &o);
 	if (mode == NULL) {
+		fprintf(stderr, "Error: argument -m \"mode\" is missing\n");
 		usage();
-		return 1;
+		return 5;
+	}
+	
+	// check if we have an allowed mode
+	int found = 0;
+	for (int i=0; i<MODE_LENGTH; i++) {
+		//printf("%s, %s\n", mode, modes[i+1]);
+		if (strcmp(mode, modes[i+1]) == 0) {
+			found = 1;
+			break;
+		}
+	}
+	
+	// did we get an available mode?
+	if (!found) {
+		fprintf(stderr, "Error: unknown mode -m \"%s\"\n", mode);
+		usage();
+		return 6;
 	}
 	
 	// check if we have a data base file
+	// FIXME: does not expand shell features like . or $VAR!
 	int db_state = access(db, W_OK);
 
 	if (db_state == -1) {
-		printf("Failed to open db file: %s\n", db);
+		printf("Failed to open db file: %s, mode: %s\n", db, db_location_type_txt[db_location_type]);
 		return 1;
 	}
 	
 	// show user which database file is used:
-	printf("db: %s\n", db);
+	printf("mode, db: \"%s\", \"%s\"\n", db_location_type_txt[db_location_type], db);
 	
 	// Create a handle for database connection, create a pointer to sqlite3
 	sqlite3 *dbhandle;
@@ -122,7 +189,6 @@ int main(int argc, char** argv) {
 		
 		// failed to insert
 		if (ret < 0) {
-			usage();
 			return 3;
 		}
 	}

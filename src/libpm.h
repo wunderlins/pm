@@ -6,9 +6,12 @@
 #define MODE_LENGTH 2
 
 #define PM_DEFAULT_DB "pm.dat"
+#define XSTR(x) #x
+#define STR(x) XSTR(x)
 
-#ifdef PM_DB
-	const char *default_db = "PM_DB";
+#ifdef PM_DB_DEFAULT
+	const char t[255] = STR(PM_DB_DEFAULT);
+	const char *default_db = t;
 #else
 	const char *default_db = NULL;
 #endif
@@ -37,7 +40,7 @@ typedef struct opt_t {
 } opt_t;
 
 typedef struct options_t {
-	struct opt_t opts[255];
+	opt_t opts[255];
 	int num_opts; // number of parsed options
 	int num_args; // number of remaining command line arguments
 	int argc;
