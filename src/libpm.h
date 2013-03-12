@@ -20,8 +20,8 @@
 
 const char* modes[] = {
 	"", 
-	"pool create",
-	"pool list"
+	"pcreate",
+	"plist"
 };
 
 typedef struct pool_t {
