@@ -129,10 +129,20 @@ sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool) {
 	             pool->title, pool->description, pool->author, pool->date, \
 	             pool->type);
 	
-	retval = sqlite3_exec(*dbhandle, sql, 0, 0, 0);
+	//if (verbose)
+	printf("sql: %s\n", sql);
+	
+	// FIXME: failing to insert the following sql stmnt
+	/*
+	 * sql: INSERT INTO pool (title, description, author, date, type) VALUES ('title', 'description sdfg sdfg sdfg sdfg
+	 * sdfasf asdf asdf asdf asdf 12345678', 'author', 1363078731, 1)
+	 */
+	char *errmsg = NULL;
+	retval = sqlite3_exec(*dbhandle, (const char*) sql, 0, 0, &errmsg);
 	
 	if(retval) {
 		printf("Inserting into pool failed, error: %d\n", retval);
+		printf("%s\n", errmsg);
 		return -1;
 	}
 	

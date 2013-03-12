@@ -7,6 +7,12 @@
 
 #define PM_DEFAULT_DB "pm.dat"
 
+#ifdef PM_DB
+	const char *default_db = "PM_DB";
+#else
+	const char *default_db = NULL;
+#endif
+
 #define OPTIONS "d:m:"
 
 const char* modes[] = {

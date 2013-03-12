@@ -1,4 +1,5 @@
-CC_OPTS=-Wall -std=c99 -I lib/
+DB=~/tmp/pm.db
+CC_OPTS=-Wall -std=c99 -I lib/ -D PM_DB=$(DB)
 CMD=gcc $(CC_OPTS) -o cmd cmd.c -L. -lpm -lreadline -lpthread -ldl -lc 
 SQL=gcc -I lib/ lib/sqlite3.o -o sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 
 

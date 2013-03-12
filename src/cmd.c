@@ -62,14 +62,16 @@ int main(int argc, char** argv) {
 			path[0] = '\0';
 			realpath((const char*) argv[0], path);
 			if (path == NULL || path[0] == '\0') {
-				usage();
-				return 1;
+				// use default location
+				db = (char*) default_db;
 			}
 			dirname(path);
 			char *tmp = strcat(path, "/");
 			db = strcat(tmp, PM_DEFAULT_DB);
-		} else
+		} else {
 			db = db_env;
+			default_db = (const char*) db_env;
+		}
 	}
 
 	char* mode = opt_get('m', &o);
@@ -85,6 +87,9 @@ int main(int argc, char** argv) {
 		printf("Failed to open db file: %s\n", db);
 		return 1;
 	}
+	
+	// show user which database file is used:
+	printf("db: %s\n", db);
 	
 	// Create a handle for database connection, create a pointer to sqlite3
 	sqlite3 *dbhandle;
@@ -172,6 +177,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 				break;
 			case 3:
 				description = argv[i];
+				//printf("%s\n", argv[i]);
 				break;
 		}
 	}
@@ -213,7 +219,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 	rec.description = description;
 	rec.author = author;
 	rec.type = 1;
-	//printf("id: %lu\ntitle: %s\n", rec.id, rec.title);
+	//printf("id: %lu\ntitle: %s\ndescription: %s\n", rec.id, rec.title, rec.description);
 	
 	sqlite3_int64 id = pool_create(&dbhandle, &rec);
 	
