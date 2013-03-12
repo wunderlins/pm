@@ -280,6 +280,10 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 	if (title == NULL || author == NULL || description == NULL)
 		return -1;
 	
+	// TODO: if one of the parameters starts with '<', read data from a
+	//       file, the remaining characters of the string contain the file
+	//       name
+
 	pool_t rec = create_pool_rec();
 	rec.title = title;
 	rec.description = description;
@@ -289,8 +293,9 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 	
 	sqlite3_int64 id = pool_create(&dbhandle, &rec);
 	
-	// TODO: check for failed db operation
-	printf("Inserted pool id: %d\n", (int) id);
+	// display id on success
+	if (id > 0)
+		printf("Inserted pool id: %d\n", (int) id);
 	
 	return id;
 }
