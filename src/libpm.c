@@ -121,24 +121,18 @@ pool_t create_pool_rec(void) {
  */
 sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool) {
 	int retval;
-	char* sql = (char*) malloc(sizeof(char)*130 + sizeof(pool->title) + \
-	                           sizeof(pool->description) + sizeof(pool->author));
+	char* sql = (char*) malloc(sizeof(char)*200 + \
+	                           strlen(pool->title)*sizeof(char) + \
+	                           strlen(pool->description)*sizeof(char) + \
+	                           strlen(pool->author)*sizeof(char));
 	
 	sprintf(sql, "INSERT INTO pool (title, description, author, date, type) " \
 	             "VALUES ('%s', '%s', '%s', %lu, %i)", \
 	             pool->title, pool->description, pool->author, pool->date, \
 	             pool->type);
 	
-	//if (verbose)
-	printf("sql: %s\n", sql);
-	
-	// FIXME: failing to insert the following sql statement, check error message!
-	/*
-	 * sql: INSERT INTO pool (title, description, author, date, type) VALUES ('title', 'description sdfg sdfg sdfg sdfg
-	 * sdfasf asdf asdf asdf asdf 12345678', 'author', 1363078731, 1)
-	 */
 	char *errmsg = NULL;
-	retval = sqlite3_exec(*dbhandle, (const char*) sql, 0, 0, &errmsg);
+	retval = sqlite3_exec(*dbhandle, (const char*) sql, NULL, NULL, &errmsg);
 	
 	if(retval) {
 		printf("Inserting into pool failed, error: %d\n", retval);
