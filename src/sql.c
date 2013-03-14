@@ -3129,12 +3129,12 @@ int main(int argc, char **argv){
       char *zHome;
       char *zHistory = 0;
       int nHistory;
-      printf(
-//        "SQLite version %s %.19s\n" /*extra-version-info*/
+/*      printf(
+//        "SQLite version %s %.19s\n" /*extra-version-info* /
         "Enter \".help\" for instructions\n"
         "Enter SQL statements terminated with a \";\"\n",
         sqlite3_libversion(), sqlite3_sourceid()
-      );
+      ); */
       zHome = find_home_dir();
       if( zHome ){
         nHistory = strlen30(zHome) + 20;

@@ -3,7 +3,8 @@
 
 #define MODE_POOL_CREATE 1
 #define MODE_POOL_LIST 2
-#define MODE_LENGTH 2
+#define MODE_SQL 3
+#define MODE_LENGTH 3
 
 #define PM_DEFAULT_DB "pm.dat"
 #define XSTR(x) #x
@@ -21,7 +22,8 @@
 const char* modes[] = {
 	"", 
 	"pcreate",
-	"plist"
+	"plist",
+	"sql"
 };
 
 typedef struct pool_t {

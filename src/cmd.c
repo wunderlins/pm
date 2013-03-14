@@ -104,22 +104,22 @@ int main(int argc, char** argv) {
 		} */
 	}
 	
+	char path[PATH_MAX + 1];
+	path[0] = '\0';
+	realpath((const char*) argv[0], path);
+	dirname(path);
+	if (path == NULL || path[0] == '\0') {
+		fprintf(stderr, "Failed to resolve directory of executable\n");
+		return 4;
+	}
+
 	// check if we can find a file named "pm.dat" in the same folder 
 	// as the executable.
 	if (db == NULL) {
-		char path[PATH_MAX + 1]; 
-		path[0] = '\0';
-		realpath((const char*) argv[0], path);
-		if (path == NULL || path[0] == '\0') {
-			fprintf(stderr, "Failed to resolve directory of executable\n");
-			return 4;
-		} else {
-			db_location_type = 2;
-			dirname(path);
-			char *tmp = strcat(path, "/");
-			db = strcat(tmp, PM_DEFAULT_DB);
-			printf("%s\n", db);
-		}
+		db_location_type = 2;
+		char *tmp = strcat(path, "/");
+		db = strcat(tmp, PM_DEFAULT_DB);
+		printf("%s\n", db);
 	}
 	
 	char* mode = opt_get('m', &o);
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
 	}
 	
 	// show user which database file is used:
-	printf("mode, db: \"%s\", \"%s\"\n", db_location_type_txt[db_location_type], db);
+	//printf("mode, db: \"%s\", \"%s\"\n", db_location_type_txt[db_location_type], db);
 	
 	// Create a handle for database connection, create a pointer to sqlite3
 	sqlite3 *dbhandle;
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 		printf("Database connection failed\n");
 		return 2;
 	}
-	printf("Connection successful\n");
+	//printf("Connection successful\n");
 	
 	//printf("%s, %s, %d\n", mode, modes[MODE_POOL_CREATE], strcmp(mode, modes[MODE_POOL_CREATE]));
 	
@@ -195,10 +195,21 @@ int main(int argc, char** argv) {
 	
 	if (strcmp(mode, modes[MODE_POOL_LIST]) == 0) {
 		display_view(dbhandle, "pool_open");
-		//free(stmt);
-		//free(sql);
+		//sqlite3_free(stmt);
+		//sqlite3_free(sql);
 	}
 	
+	if (strcmp(mode, modes[MODE_SQL]) == 0) {
+		char exe[1024];
+		sprintf(exe, "%s/sql %s", path, db);
+		for (int i=argc-o.num_args; i<o.argc; i++) {
+			strcat(exe, " ");
+			strcat(exe, argv[i]);
+		}
+		// printf("%s\n", exe);
+		return system((const char*) exe);
+	}
+
 	// Close the dbhandle to free memory
 	sqlite3_close(dbhandle);
 	

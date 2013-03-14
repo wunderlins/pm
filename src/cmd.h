@@ -6,7 +6,13 @@
 "\n"
 
 #define USAGE_END "" \
-"\n\nVARIABLES:\n" \
+"\n" \
+"\n" \
+"EXAMPLE:\n" \
+"  pm -m pcreate <title> <author> [description]\n" \
+"  echo description | pm -m pcreate <title> <author>\n" \
+"  pm -m pcreate # will ask intreactively for input\n" \
+"\nVARIABLES:\n" \
 "  PM_DB: path to the sqlite database\n" \
 "\n" \
 "EXIT CODES:\n" \
