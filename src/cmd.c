@@ -259,7 +259,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 		}
 	}
 	
-	// if there is no param 3 provided or param 3 is == "-" then check 
+	// if there is no param 3 provided then check 
 	// for data on stdin
 	//  - check if we have input from stdin, see test/select
 	//  - if there is input on stdin, read it into memory,
