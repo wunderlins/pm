@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
-# this is for python > 2.6
-
 from ctypes import *
-cdll.LoadLibrary("libpm.so")
-libpm = CDLL("libpm.so")
 
-file   = ""
-ret    = ""
-c_file = c_char_p(file)
-c_ret  = c_char_p(ret)
-c_file = "./pm"
-c_ret  = ""
+cdll.LoadLibrary("../src/libpm.so")
+_libpm = CDLL("libpm.so")
 
-
+# int read_file(char* filename, char** contents);
+def read_file(s):
+    _append = _libpm.read_file
+    _append.argtypes = [c_char_p, c_char_p]
+    _append.restype = c_int
+    return _append(s)
