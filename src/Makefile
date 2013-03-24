@@ -1,10 +1,12 @@
-DST=../target/debug
-
+TARGET=debug
+DST=../target/$(TARGET)
 DB=/home/wus/tmp/pm.dat
-CC_OPTS=-Wall -std=c99 -I lib/ -g -DPM_DB_DEFAULT="$(DB)"
-#CC_OPTS=-Wall -std=c99 -I lib/ -g 
-CMD=gcc $(CC_OPTS) -o $(DST)/cmd cmd.c -L. -lpm -lreadline -lpthread -ldl -lc 
-SQL=gcc -I lib/ lib/sqlite3.o -o $(DST)/sql sql.c -L. -lpm -lreadline -lpthread -ldl -lc 
+LIBDIR=-L. -L../target/$(TARGET)
+CC_OPTS=-Wall -std=c99 -I lib/ -g -DPM_DB_DEFAULT="$(DB)" $(LIBDIR)
+CMD=gcc $(CC_OPTS) -o $(DST)/cmd cmd.c -lpm -lreadline -lpthread -ldl -lc 
+SQL=gcc $(LIBDIR) -I lib/ lib/sqlite3.o -o $(DST)/sql sql.c -lpm -lreadline -lpthread -ldl -lc  
+
+.PHONY: exe db clean 
 
 all: exe so cmd sql
 	$(CMD)
@@ -46,5 +48,4 @@ sql:
 
 test/select:
 	gcc $(CC_OPTS) -o test/select test/select.c
-
 
