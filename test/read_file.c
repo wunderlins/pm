@@ -10,6 +10,7 @@
 #include <getopt.h>
 #include <stdio.h>
 
+
 /** read a file into memmory
  *
  *
@@ -18,13 +19,13 @@
  * read_file("pm.c", &content);
  * printf("%s", content);
  */
-int read_file(char* filename, char** contents) {
+int read_file(char* filename, char* contents[]) {
 	int size = 0;
 
 	struct stat sb;
 
 	// file reachable and exists ?
-	printf("%s\n", filename);
+	//printf("%s\n", filename);
 	if (stat(filename, &sb) == -1)
 		return errno;
 
@@ -47,7 +48,7 @@ int read_file(char* filename, char** contents) {
 		fclose(fd);
 		return errno;
 	}
-	printf("%d\n", (int) sb.st_size);
+	//printf("%d\n", (int) sb.st_size);
 
 	// check if the read size equals the file size
 	if (size != fread(*contents, sizeof(char), sb.st_size, fd)) {
@@ -64,8 +65,13 @@ int read_file(char* filename, char** contents) {
 
 int main(int argc, char *argv[]) {
 
+	if (argc != 2) {
+		printf("usage: print_file <filename>\n");
+		exit(1);
+	}
+
 	char *contents;
-	int r = read_file("test_pypm.py", &contents);
+	int r = read_file(argv[1], &contents);
 	printf("%d, %s\n", r, contents);
 
 	return 0;
