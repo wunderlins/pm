@@ -10,11 +10,8 @@ def read_file(file):
     _read_file = _libpm.read_file
     _read_file.argtypes = [c_char_p, POINTER(c_char_p)]
     _read_file.restype = c_int
-    #contents = ""
-    #contents = create_string_buffer('\000')
-    c = ""
-    contents = c_char_p(c);
-    #contents = POINTER(c_char_p)
+    
+    contents = c_char_p("")
     ret = _read_file(file, byref(contents))
     
     if (ret != 0):
