@@ -258,7 +258,7 @@ int opt_parse(int argc, char *argv[], const char * optstring, struct options_t* 
  *
  * If reading the file works, string.error will be 0.
  */
-string str_readfile(FILE *file, int bs) {
+string str_readfilef(FILE *file, int bs) {
 	int charsize = sizeof(char);
 	int charcount = 0;
 	int blocksize;
@@ -315,3 +315,37 @@ string str_readfile(FILE *file, int bs) {
 	return l;
 }
 
+string str_readfile(char *filename, int bs) {
+	struct stat sb;
+
+	// file reachable and exists ?
+	//printf("%s\n", filename);
+	if (stat(filename, &sb) == -1) {
+		string l = {
+			.error = errno,
+			.length = 0,
+			.memsize = 0,
+			.length = 0,
+			.text = '\0'
+		};
+		return l;
+	}
+
+	// file must be readable by this user
+	FILE* fd;
+	fd = fopen(filename, "r");
+
+	// failed to open file
+	if (fd == NULL) {
+		string l = {
+			.error = errno,
+			.length = 0,
+			.memsize = 0,
+			.length = 0,
+			.text = '\0'
+		};
+		return l;
+	}
+
+	return str_readfilef(fd, bs);
+}

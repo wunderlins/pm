@@ -275,7 +275,7 @@ sqlite3_int64 mode_pool_create(sqlite3 *dbhandle, struct options_t* opts, char *
 	};
 	int ret = select(fileno(stdin)+1, &s_rd, &s_wr, &s_ex, &timeout);
 	if (ret > 0) {
-		string input = str_readfile(stdin, 0);
+		string input = str_readfilef(stdin, 0);
 		description = input.text;
 	}
 	

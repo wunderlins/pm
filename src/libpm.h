@@ -74,7 +74,8 @@ struct string_t {
 typedef struct string_t string;
 
 // function declarations
-string str_readfile(FILE *file, int bs);
+string str_readfilef(FILE *file, int bs);
+string str_readfile(char *filename, int bs);
 #endif
 
 
