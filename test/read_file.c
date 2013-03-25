@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>
+#include "sqlite3.h"
+#include "libpm.h"
 
 
 /** read a file into memmory
@@ -18,7 +20,7 @@
  * char* content;
  * read_file("pm.c", &content);
  * printf("%s", content);
- */
+
 int read_file(char* filename, char* contents[]) {
 	int size = 0;
 
@@ -62,6 +64,7 @@ int read_file(char* filename, char* contents[]) {
 
 	return 0;
 }
+ */
 
 int main(int argc, char *argv[]) {
 

@@ -22,4 +22,9 @@ def read_file(file):
     
     #print "%s\n" % repr(contents.value)
     #print "%d, %s" % (ret, contents.value)
+    
+    # FIXME: there seems to be soem garbage bytes at the end of the 
+    #        result string. It looks like it is aligning with 8 
+    #        byte blocks
+    
     return contents.value

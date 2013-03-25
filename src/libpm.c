@@ -166,7 +166,10 @@ int read_file(char* filename, char** contents) {
 	fseek(fd, 0, SEEK_SET);
 	
 	// allocate memmory
-	*contents = (char*) malloc((char) sizeof(char)*size + 1);
+	unsigned int l = sizeof(char)*size + sizeof(char);
+	//l = l + (l % 8) - 1;
+	//printf("%d\n", l);
+	*contents = (char*) malloc(l);
 	if (*contents == NULL) {
 		fclose(fd);
 		return errno;
