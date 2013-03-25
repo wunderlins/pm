@@ -5,7 +5,7 @@ from ctypes import *
 cdll.LoadLibrary("../target/debug/libpm.so")
 _libpm = CDLL("libpm.so")
 
-class ST(Structure):
+class STRING(Structure):
     _fields_ = [("memsize", c_int),
                 ("length", c_int),
                 ("text", c_char_p),
@@ -35,7 +35,7 @@ def read_file(file):
 def str_readfile(filename):
     _str_readfile = _libpm.str_readfile
     _str_readfile.argtypes = [c_char_p, c_int]
-    _str_readfile.restype = ST
+    _str_readfile.restype = STRING
     
     ret = _str_readfile(filename, 0)
     print repr(ret.text)
