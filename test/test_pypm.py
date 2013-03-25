@@ -5,4 +5,6 @@ sys.path.append("../src/")
 
 import pypm
 
-pypm.read_file("./test_pypm.py")
+c = pypm.read_file("./test_pypm.py")
+#print repr(c)
+print c

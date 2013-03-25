@@ -148,7 +148,7 @@ int read_file(char* filename, char** contents) {
 	struct stat sb;
 
 	// file reachable and exists ?
-	printf("%s\n", filename);
+	//printf("%s\n", filename);
 	if (stat(filename, &sb) == -1)
 		return errno;
 	
@@ -166,19 +166,19 @@ int read_file(char* filename, char** contents) {
 	fseek(fd, 0, SEEK_SET);
 	
 	// allocate memmory
-	*contents = (char*) malloc((char) sizeof(char)*sb.st_size + 1);
+	*contents = (char*) malloc((char) sizeof(char)*size + 1);
 	if (*contents == NULL) {
 		fclose(fd);
 		return errno;
 	}
-	printf("%d\n", (int) sb.st_size);
+	//printf("%d\n", (int) sb.st_size);
 	
 	// check if the read size equals the file size
 	if (size != fread(*contents, sizeof(char), sb.st_size, fd)) {
 		free(*contents);
 		fclose(fd);
-		return 3; // -2 means file reading fail 
-	} 
+		return 3;
+	}
 	
 	// close handle
 	fclose(fd);

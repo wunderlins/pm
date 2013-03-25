@@ -8,7 +8,7 @@ _libpm = CDLL("libpm.so")
 # int read_file(char* filename, char** contents);
 def read_file(file):
     _read_file = _libpm.read_file
-    _read_file.argtypes = [c_char_p, c_char_p]
+    _read_file.argtypes = [c_char_p, POINTER(c_char_p)]
     _read_file.restype = c_int
     #contents = ""
     #contents = create_string_buffer('\000')
@@ -16,5 +16,10 @@ def read_file(file):
     contents = c_char_p(c);
     #contents = POINTER(c_char_p)
     ret = _read_file(file, byref(contents))
-    print contents.value
-    print "%d, %s" % (ret, contents.value)
+    
+    if (ret != 0):
+    	raise Exception("Error in libpm.so->read_file()", ret)
+    
+    #print "%s\n" % repr(contents.value)
+    #print "%d, %s" % (ret, contents.value)
+    return contents.value
