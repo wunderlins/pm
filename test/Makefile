@@ -1,4 +1,6 @@
-.PHONY: read_file
+.PHONY: read_file libtest
+CC_OPTS=-Wall -std=c99
+LIBNAME=test
 
 read_file:
 	gcc -Wall -o read_file read_file.c -I ../src -L ../target/debug \
@@ -7,3 +9,10 @@ read_file:
 str_readfile:
 	gcc -Wall -o str_readfile str_readfile.c -I ../src -L ../target/debug \
 	    -I ../src/lib -lpm -lreadline -lpthread -ldl -lc 
+
+	    
+libtest:
+	gcc $(CC_OPTS) -c -fPIC lib$(LIBNAME).c -o lib$(LIBNAME).o
+	gcc $(CC_OPTS) -shared -Wl,-soname,lib$(LIBNAME).so -o lib$(LIBNAME).so lib$(LIBNAME).o
+	gcc $(CC_OPTS) -o lib$(LIBNAME) lib$(LIBNAME).c
+	
