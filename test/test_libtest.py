@@ -5,3 +5,4 @@ import pylibtest
 
 ret = pylibtest.struct_test(4, "blah")
 
+print ret;

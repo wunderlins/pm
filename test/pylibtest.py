@@ -16,4 +16,5 @@ def struct_test(id, str):
     
     ret = _struct_test(id, str)
     
-    print ret.string
+    return [("id", ret.id),
+            ("string", ret.string)]

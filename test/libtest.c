@@ -11,8 +11,11 @@ st_test struct_test(int id, char *string) {
 	i.id = id;
 
 	// allocate mem for a copy of string
-	char *str = (char*) malloc(sizeof(char) * (strlen(string)+1));
+	char *append = " -> end";
+	char *str = (char*) malloc(sizeof(char) *
+			        (strlen(string) + strlen(append) + 1));
 	strcpy(str, string);
+	strcat(str, append);
 
 	i.string = str;
 	return i;
