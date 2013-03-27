@@ -1,8 +1,20 @@
 #include "libtest.h"
 
 int main(int argc, char **argv) {
+	if (argc != 3) {
+		printf("Usage: %s <id> <filename>\n", argv[0]);
+		exit(1);
+	}
+
+	printf("struct_test(atoi(argv[1]), argv[2]);\n");
 	st_test v = struct_test(atoi(argv[1]), argv[2]);
 	printf("st_test {id: %d, string: \"%s\"}\n", v.id, v.string);
+
+	printf("str_readfile(argv[2], 512);\n");
+	string r = str_readfile(argv[2], 512);
+	printf("string {memsize: %d, length: %d, text: \"%s\", error: %d}\n",
+	       r.memsize, r.length, r.text, r.error);
+
 	return 0;
 }
 
