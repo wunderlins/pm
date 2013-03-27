@@ -6,11 +6,11 @@ CC_OPTS=-Wall -std=c99 -I lib/ -g -DPM_DB_DEFAULT="$(DB)" $(LIBDIR)
 CMD=gcc $(CC_OPTS) -o $(DST)/cmd cmd.c -lpm -lreadline -lpthread -ldl -lc 
 SQL=gcc $(LIBDIR) -I lib/ lib/sqlite3.o -o $(DST)/sql sql.c -lpm -lreadline -lpthread -ldl -lc  
 
-.PHONY: exe so db clean pypm sql cmd pm
+.PHONY: exe so db clean pypm sql cmd
 
 all: 
-	$(MAKE) -C ../test all
 	$(MAKE) exe so cmd sql pypm
+	$(MAKE) -C ../test all
 	
 db:
 	rm $(DB) || true
@@ -19,11 +19,13 @@ db:
 	cp $(DB) pm.dat $(DST)/pm.dat
 	
 clean:
-	rm pm || true
-	rm *.o || true
-	rm *.so || true
-	rm cmd || true
-	rm sql || true
+	$(MAKE) -C ../test clean
+	$(RM) $(DST)/pm
+	$(RM) *.o
+	$(RM) *.pyc
+	$(RM) $(DST)/*.so
+	$(RM) $(DST)/cmd
+	$(RM) $(DST)/sql
 	
 exe:
 	echo '#!/usr/bin/env bash' > $(DST)/pm

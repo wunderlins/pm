@@ -1,8 +1,18 @@
-.PHONY: read_file libtest select str_readfile
+.PHONY: read_file libtest select str_readfile clean
 CC_OPTS=-Wall -std=c99
 LIBNAME=test
 
 all: read_file libtest select str_readfile
+
+clean:
+	$(RM) read_file
+	$(RM) libtest
+	$(RM) libtest.o
+	$(RM) libtest.so
+	$(RM) read_file
+	$(RM) select
+	$(RM) str_readfile
+	$(RM) *.pyc
 
 select:
 	gcc $(CC_OPTS) -o select select.c
