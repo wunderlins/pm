@@ -8,7 +8,9 @@ SQL=gcc $(LIBDIR) -I lib/ lib/sqlite3.o -o $(DST)/sql sql.c -lpm -lreadline -lpt
 
 .PHONY: exe so db clean pypm sql cmd pm
 
-all: exe so cmd sql pypm
+all: 
+	$(MAKE) -C ../test all
+	$(MAKE) exe so cmd sql pypm
 	
 db:
 	rm $(DB) || true

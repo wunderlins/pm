@@ -1,6 +1,8 @@
-.PHONY: read_file libtest
+.PHONY: read_file libtest select str_readfile
 CC_OPTS=-Wall -std=c99
 LIBNAME=test
+
+all: read_file libtest select str_readfile
 
 select:
 	gcc $(CC_OPTS) -o select select.c
