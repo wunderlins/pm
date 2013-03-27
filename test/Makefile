@@ -2,6 +2,10 @@
 CC_OPTS=-Wall -std=c99
 LIBNAME=test
 
+select:
+	gcc $(CC_OPTS) -o select select.c
+
+
 read_file:
 	gcc -Wall -o read_file read_file.c -I ../src -L ../target/debug \
 	    -I ../src/lib -lpm -lreadline -lpthread -ldl -lc 

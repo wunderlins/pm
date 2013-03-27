@@ -6,11 +6,9 @@ CC_OPTS=-Wall -std=c99 -I lib/ -g -DPM_DB_DEFAULT="$(DB)" $(LIBDIR)
 CMD=gcc $(CC_OPTS) -o $(DST)/cmd cmd.c -lpm -lreadline -lpthread -ldl -lc 
 SQL=gcc $(LIBDIR) -I lib/ lib/sqlite3.o -o $(DST)/sql sql.c -lpm -lreadline -lpthread -ldl -lc  
 
-.PHONY: exe db clean 
+.PHONY: exe so db clean pypm sql cmd pm
 
-all: exe so cmd sql
-	$(CMD)
-	$(SQL)
+all: exe so cmd sql pypm
 	
 db:
 	rm $(DB) || true
@@ -27,9 +25,10 @@ clean:
 	
 exe:
 	echo '#!/usr/bin/env bash' > $(DST)/pm
-	echo '' >> $(DST)/pm
+	echo '# $$Id$$' >> $(DST)/pm
 	echo 'LD_LIBRARY_PATH=. ./cmd "$$@"' >> $(DST)/pm
 	chmod 700 $(DST)/pm
+	../bin/git_id.sh $(DST)/pm $(DST)/pm
 	
 sqlite3:
 	gcc $(CC_OPTS) -c -fPIC lib/sqlite3.c -o lib/sqlite3.o -lpthread -ldl -lc 
@@ -46,6 +45,6 @@ cmd:
 sql:
 	$(SQL)
 
-test/select:
-	gcc $(CC_OPTS) -o test/select test/select.c
-
+pypm:
+	../bin/git_id.sh pypm.py $(DST)/pypm.py
+	
