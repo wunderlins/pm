@@ -4,5 +4,7 @@ import sys
 import pylibtest
 
 ret = pylibtest.struct_test(4, "blah")
+print ret
 
-print ret;
+ret2 = pylibtest.str_readfile("Makefile")
+print ret2
