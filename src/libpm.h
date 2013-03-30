@@ -1,6 +1,10 @@
 #ifndef LIBPM_H_
 #define LIBPM_H_
 
+#include <stdio.h>
+#include <stddef.h>
+#include <sqlite3.h>
+
 #define MODE_POOL_CREATE 1
 #define MODE_POOL_LIST 2
 #define MODE_SQL 3
