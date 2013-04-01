@@ -24,7 +24,8 @@ db_field = {
     'primary_key'  : False,
     'autoincrement': False,
     'null'         : True,
-    'default'      : None
+    'default'      : None,
+    'last'         : False
 }
     
 import ConfigParser
@@ -33,6 +34,13 @@ config.read(ini_file)
 
 sections = config.sections()
 
+""" parse an ini directive
+
+this function returns a list of table fields in the order of declaration.
+
+every field can have the attributes defined in db_field. 
+ 
+"""
 def parse_tbl(table_name):
     db_current_table = []
     last_prefix = None
@@ -48,6 +56,7 @@ def parse_tbl(table_name):
         
         if (prefix != last_prefix):
             if current_db_field != None:
+                current_db_field['last'] = True
                 db_current_table.append(current_db_field)
                 #print current_db_field
             last_prefix = prefix
@@ -80,29 +89,42 @@ def parse_tbl(table_name):
     db_current_table.append(current_db_field)
     return db_current_table
 
-def generate_sql(e):
-    if (e['size'] > 0):
-        print "\t\"%s\" %s(%s)" % (e['name'], e['type'].upper(), e['size']),
+""" generate sql for a table 
+
+the input parameter is a list of db_field
+"""
+def generate_table_sql(e):
+    buffer = ""
+    if (e['size'] > 0 and e['type'] != "integer"):
+        buffer += "\t\"%s\" %s(%s) " % (e['name'], e['type'].upper(), e['size'])
     else:
-        print "\t\"%s\" %s" % (e['name'], e['type'].upper()),
+        buffer += "\t\"%s\" %s " % (e['name'], e['type'].upper())
     
     if e['primary_key']:
-        print "PRIMARY KEY",
+        buffer += "PRIMARY KEY "
     
     if e['autoincrement']:
-        print "AUTOINCREMENT",
+        buffer += "AUTOINCREMENT "
     
     if not e['null']:
-        print "NOT NULL",
+        buffer += "NOT NULL "
     
     if e['default']:
-        print "DEFAULT (%s)" % e['default'],
+        buffer += "DEFAULT (%s) " % e['default']
     
-    print ""
+    if buffer.endswith(" "): 
+        buffer = buffer[:-1]
+    
+    if e['last']:
+        buffer += ","
+    return buffer + "\n"
 
+# parse ini file and generate:
+#    schema.sql
+fp_sql = open("schema.sql", "w")
 for s in sections:
-    print "CREATE TABLE \"%s\" (" % s
+    fp_sql.write("CREATE TABLE \"%s\" (\n" % s)
     r = parse_tbl(s)
-    for e in r:
-        generate_sql(e) 
-    print ");"
+    for tbl in r:
+        fp_sql.write(generate_table_sql(tbl))
+    fp_sql.write(");\n")
