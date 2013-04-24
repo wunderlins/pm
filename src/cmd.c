@@ -65,15 +65,6 @@ int main(int argc, char** argv) {
 	// variable PM_DB is checked. If still nothing was found the default 
 	// file pm.dat (in the same folder as the executable) is used.
 	
-	int db_location_type = 0;
-	const char *db_location_type_txt[] = {
-		"argument",
-		"ENV variable",
-		"runtime dir",
-		"compile time",
-		"none"
-	};
-	
 	// use command line switch -d
 	char* db = opt_get('d', &o);
 	
@@ -82,7 +73,6 @@ int main(int argc, char** argv) {
 		char *db_env = getenv("PM_DB");		
 		
 		if (db_env != NULL) {
-			db_location_type = 1;
 			db = db_env;
 			default_db = (const char*) db_env;
 		}
@@ -92,7 +82,6 @@ int main(int argc, char** argv) {
 	if(db == NULL) {
 	
 		if (default_db != NULL) {
-			db_location_type = 3;
 			db = (char*) default_db;
 		} /* else {
 			db_location_type = 4;
@@ -116,7 +105,6 @@ int main(int argc, char** argv) {
 	// check if we can find a file named "pm.dat" in the same folder 
 	// as the executable.
 	if (db == NULL) {
-		db_location_type = 2;
 		char *tmp = strcat(path, "/");
 		db = strcat(tmp, PM_DEFAULT_DB);
 		printf("%s\n", db);
@@ -146,34 +134,14 @@ int main(int argc, char** argv) {
 		return 6;
 	}
 	
-	// check if we have a data base file
-	// FIXME: does not expand shell features like . or $VAR!
-	int db_state = access(db, W_OK);
+	// try to open the database, NULL returned upon error
+	sqlite3 *dbhandle = open_db(db);
 
-	if (db_state == -1) {
-		printf("Failed to open db file: %s, mode: %s\n", db, db_location_type_txt[db_location_type]);
-		return 1;
-	}
-	
-	// show user which database file is used:
-	//printf("mode, db: \"%s\", \"%s\"\n", db_location_type_txt[db_location_type], db);
-	
-	// Create a handle for database connection, create a pointer to sqlite3
-	sqlite3 *dbhandle;
-		
-	// Create an int variable for storing the return code for each call
-	int retval;
-	
-	// open the database
-	// pass a pointer to the pointer to sqlite3, in short sqlite3**
-	retval = sqlite3_open(db, &dbhandle);
-	
-	// If connection failed, dbhandle returns NULL
-	if(retval) {
-		printf("Database connection failed\n");
+	if (dbhandle == NULL) {
+		printf("Failed to open %s\n", db);
 		return 2;
 	}
-	//printf("Connection successful\n");
+
 	
 	//printf("%s, %s, %d\n", mode, modes[MODE_POOL_CREATE], strcmp(mode, modes[MODE_POOL_CREATE]));
 	
@@ -215,6 +183,7 @@ int main(int argc, char** argv) {
 	
 	return 0;
 }
+
 
 /** insert pool entry
  *

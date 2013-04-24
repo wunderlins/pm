@@ -41,9 +41,36 @@ User interface definition:
 #include <sys/select.h>
 #include <sys/time.h>
 
-
 // our own libs
 #include "libpm.h"
+
+sqlite3* open_db(char* file) {
+	// check if we have a data base file
+	// FIXME: does not expand shell features like . or $VAR in file name!
+	int db_state = access(file, W_OK);
+
+	if (db_state == -1)
+		return NULL;
+
+	// show user which database file is used:
+	//printf("mode, db: \"%s\", \"%s\"\n", db_location_type_txt[db_location_type], db);
+
+	// Create a handle for database connection, create a pointer to sqlite3
+	sqlite3 *dbhandle;
+
+	// Create an int variable for storing the return code for each call
+	int retval;
+
+	// open the database
+	// pass a pointer to the pointer to sqlite3, in short sqlite3**
+	retval = sqlite3_open(file, &dbhandle);
+
+	// If connection failed, dbhandle returns NULL
+	if(retval)
+		return NULL;
+
+	return dbhandle;
+}
 
 // data management
 int display_view(sqlite3 *dbhandle, char* view) {

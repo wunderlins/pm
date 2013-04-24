@@ -54,6 +54,7 @@ typedef struct options_t {
 	//char* args[];  // remaining arguments
 } options_t;
 
+sqlite3 *open_db(char* file);
 pool_t create_pool_rec(void);
 sqlite3_int64 pool_create(sqlite3 **dbhandle, pool_t *pool);
 int display_view(sqlite3 *dbhandle, char* view);

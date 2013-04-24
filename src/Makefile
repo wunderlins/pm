@@ -16,7 +16,7 @@ db:
 	rm $(DB) || true
 	sqlite3 $(DB) <var/schema.sql
 	sqlite3 $(DB) <var/data.sql
-	cp $(DB) pm.dat $(DST)/pm.dat
+	cp $(DB) $(DST)/
 	
 clean:
 	$(MAKE) -C ../test clean
